@@ -1,12 +1,18 @@
 import React from 'react';
 import { formatTime } from '../Utilities/utilities.js'; 
 
-export const Message = ({ messageInfo, hoverHandler }) => {
-    console.log('in message component:', messageInfo);
+export const Message = ({ messageInfo, mouseEnterHandler, mouseLeaveHandler }) => {
     return (
-        <div className="message-wrapper">
-            {messageInfo.message}
-            {formatTime(messageInfo.timestamp)}
+        <div className="message-wrapper" 
+            onMouseEnter={() => mouseEnterHandler(messageInfo.userId)}
+            onMouseLeave={mouseLeaveHandler}
+        >
+            <div className="message-body">
+                {messageInfo.message}
+            </div>
+            <div className="message-timestamp">
+                {formatTime(messageInfo.timestamp)}
+            </div>
         </div>
     );
 }

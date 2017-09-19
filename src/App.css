@@ -1,8 +1,40 @@
 * {
   box-sizing: border-box;
 }
+.outer-wrapper {
+}
 .message-wrapper {
+  width: 60%;
   padding: 1em;
-  border: 1px solid #333;
-  margin: 10px auto;
+  border-radius: 5px;
+  background-color: #333;
+  color: #f5f5f5;
+  margin-top: 10px;
+}
+.message-body {
+  margin-bottom: 1em;
+}
+.message-timestamp {
+  font-size: 0.75em;
+  font-style: italic;
+  text-align: right;
+}
+.active-member {
+  position: fixed;
+  width: 35%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  right: 0;
+}
+.member-details {
+  text-align: center;
+}
+.email {
+  margin-top: 1em;
+}
+.member-details img {
+  border-radius: 50%;
 }

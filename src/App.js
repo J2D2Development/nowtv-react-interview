@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { store } from './store';
 
-import getChatLog from './service';
+import { getChatLog, getMembersInfo } from './service';
 import { compareTime } from './Utilities/utilities';
 
 import { Message } from './Components/Message';
+import { HoverDiv } from './Components/HoverDiv';
 
 import './App.css';
 
@@ -16,42 +17,77 @@ class App extends Component {
     super(props);
 
     this.state = {
-      messages: []
+      messages: [],
+      members: [],
+      showMember: false,
+      memberHovered: {}
     };
 
     props.getChatLog().then(response => {
       this.setState({ messages: response.value });
     });
 
-    store.subscribe(() => {
-      this.setState({
-        messages: store.getState()
-      }, () => console.log(this.state));
+    props.getMembersInfo().then(response => {
+      this.setState({ members: response.value });
     });
+
+    // store.subscribe(() => {
+    //   this.setState({ messages: store.getState() });
+    // });
+
+    // store.subscribe(() => {
+    //   this.setState({ messages: store.getState() });
+    // });
   }
 
   displayMessages = (messages) => {
     return messages.map(message => {
-      return <Message 
-        messageInfo={message} 
-        hoverHandler={this.hoverHandler}
-      />
-    }).sort(compareTime);
+        return <Message 
+              key={message.id}
+              messageInfo={message} 
+              mouseEnterHandler={this.mouseEnterHandler}
+              mouseLeaveHandler={this.mouseLeaveHandler}
+            />
+      });
   }
 
-  hoverHandler = () => {
-    console.log('hovering!');
+  mouseEnterHandler = (userId) => {
+    if(userId === this.state.memberHovered.userId) {
+      return;
+    }
+    const hovered = this.state.members.find(member => member.id === userId);
+    this.setState({
+      memberHovered: hovered,
+      showMember: true
+    });
+  }
+
+  mouseLeaveHandler = () => {
+    this.setState({
+      showMember: false
+    });
   }
 
   render() {
     return (
-      <div>
-        <h1>Hello!</h1>
-        {
-          this.state.messages.length > 0 ?
-            this.displayMessages(this.state.messages) :
-            'Messages loading...'
-        }
+      <div className="outer-wrapper">
+        <div>
+          {
+            this.state.messages.length > 0 ?
+              this.displayMessages(this.state.messages) :
+              'Messages loading...'
+          }
+        </div>
+        <div className="active-member">
+          {
+            this.state.showMember && this.state.memberHovered.email ?
+              <HoverDiv
+                email={this.state.memberHovered.email}
+                avatar={this.state.memberHovered.avatar}
+              /> :
+              ''
+          }
+        </div>
       </div>
     );
   }
@@ -61,7 +97,7 @@ const mapStateToProps = state => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({ getChatLog }, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ getChatLog, getMembersInfo }, dispatch);
 
 export default connect(
   mapStateToProps,
